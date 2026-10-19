@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: bookleaf-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bookleaf-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        value: https://bookleaf-frontend.onrender.com
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: ADMIN_EMAIL
+        value: admin@bookleaf.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DEMO_PASSWORD
+        sync: false
+      - key: SAMPLE_DATA_PATH
+        value: data/bookleaf_sample_data.json
+      - key: SEED_SAMPLE_DATA
+        value: true
+
+  - type: web
+    name: bookleaf-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://bookleaf-api.onrender.com
+
+databases:
+  - name: bookleaf-db
+    databaseName: bookleaf
+    user: bookleaf_user
+    plan: free
