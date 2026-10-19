@@ -41,7 +41,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://bookleaf-api.onrender.com
+        value: https://bookleaf-api-o0gt.onrender.com
 
 databases:
   - name: bookleaf-db
